@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Finder</title>
+    <!-- Load Font Awesome for Icons (like the utensil and arrow) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Importing a modern font for better aesthetics */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+        /* --- Variable Definitions --- */
+        :root {
+            --primary: #e67e22; /* Burnt Orange/Carrot */
+            --primary-dark: #d35400;
+            --secondary: #27ae60; /* Emerald Green */
+            --text-dark: #2c3e50; /* Dark Blue/Grey */
+            --text-light: #ecf0f1; /* Light Grey */
+            --background: #f4f7f6; /* Very Light Grey Background */
+            --card-bg: #ffffff;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* --- Base & Layout --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 95%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        /* Buttons & Header */
+        .home-link {
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .b1 {
+            background-color: var(--primary);
+            color: var(--text-light);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .b1:hover {
+            background-color: var(--primary-dark);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+        .api-link {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #777;
+        }
+        .api-link a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Search Bar */
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        #search-input {
+            flex-grow: 1;
+            padding: 15px;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+        }
+        #search-btn {
+            background-color: var(--secondary);
+            color: var(--text-light);
+            border: none;
+            padding: 0 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        #search-btn:hover {
+            background-color: #219653; /* Darker secondary */
+        }
+        #search-btn i {
+            margin-right: 5px;
+        }
+
+        /* Results Display */
+        #result-heading {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        .meals-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 10px;
+        }
+
+        /* Meal Card */
+        .meal {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid #eee;
+        }
+        .meal:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+        .meal-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        .meal-info {
+            padding: 15px;
+            text-align: center;
+        }
+        .meal-info h2 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .view-recipe-btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .view-recipe-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Meal Details View */
+        .meal-details-view {
+            padding: 20px;
+        }
+        #back-btn {
+            background-color: #95a5a6; /* Grey */
+            margin-bottom: 20px;
+        }
+        #back-btn i {
+            margin-right: 8px;
+        }
+        .meal-details-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .meal-details-img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        .meal-details-header {
+            text-align: center;
+        }
+        .meal-details-header h2 {
+            font-size: 2rem;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+        .meal-details-category span {
+            background-color: var(--secondary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        .meal-details-instructions {
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            padding: 15px;
+            background-color: #f7f7f7;
+            border-radius: 8px;
+        }
+        .meal-details-instructions h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            color: var(--primary);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+        .meal-details-ingredients h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            font-size: 1.5rem;
+            color: var(--secondary);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+        .ingredients-list {
+            list-style-type: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            padding: 0;
+        }
+        .ingredients-list li {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background-color: #f7f7f7;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            word-break: break-word;
+        }
+        .ingredients-list li i {
+            color: var(--primary);
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+        .youtube-link .view-recipe-btn {
+            background-color: red !important; /* Red for YouTube */
+        }
+
+        /* Error/Loading State */
+        .error-container, .spinner-container {
+            text-align: center;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: var(--border-radius);
+        }
+        .error-container {
+            background-color: #fce4e4;
+            color: #c0392b;
+            border: 1px solid #c0392b;
+            font-weight: 600;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        /* Spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- Responsive Layout --- */
+        @media (min-width: 768px) {
+            .meal-details-content {
+                flex-direction: row-reverse; /* Instructions on left, image on right */
+                align-items: flex-start;
+            }
+            .meal-details-content > div:first-child {
+                flex: 2; /* Instructions container */
+            }
+            .meal-details-img {
+                width: 300px;
+                height: 300px;
+                flex-shrink: 0;
+            }
+            .meal-details-header {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+   <div class="container">
+    <!-- HOME link updated to placeholder -->
+
+
+    <header>
+        <h1 class="fas fa-utensils"> Recipe Finder</h1>
+        <p>Find delicious recipes from around the world😎</p>
+    </header>
+
+    <p class="api-link">
+        Data from <a href="https://www.themealdb.com/api.php" target="_blank">TheMealDB</a>
+    </p>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search for meals or keywords (e.g., 'Chicken', 'Pizza')" required>
+        <button id="search-btn"><i class="fas fa-search"></i> Search</button>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="spinner-container hidden">
+        <div class="spinner"></div>
+        <p>Fetching delicious recipes...</p>
+    </div>
+
+    <!-- Error Message Container -->
+    <div id="error-container" class="error-container hidden">
+        <p id="error-message">No meals found. Try another search term!</p>
+    </div>
+
+    <div id="result-heading"></div>
+
+    <!-- Meal Cards Container -->
+    <div id="meals" class="meals-container hidden"></div>
+
+    <!-- Meal Details View -->
+    <div id="meal-details" class="hidden meal-details-view">
+        <button id="back-btn" class="b1"><i class="fas fa-arrow-left"></i> Back to Recipes</button>
+        <div class="meal-details-content">
+            <!-- Details will be injected here -->
+        </div>
+    </div>
+   </div>
+
+   <script>
+    const searchInput = document.getElementById("search-input");
+    const searchBtn = document.getElementById("search-btn");
+    const mealsContainer = document.getElementById("meals");
+    const resultHeading = document.getElementById("result-heading");
+    const errorContainer = document.getElementById("error-container");
+    const errorMessage = document.getElementById("error-message");
+    const mealDetailsView = document.getElementById("meal-details");
+    const mealDetailsContent = document.querySelector("#meal-details .meal-details-content"); // Fixed selector
+    const backBtn = document.getElementById("back-btn");
+    const loadingSpinner = document.getElementById("loading-spinner");
+
+    const BASE_URL = "https://www.themealdb.com/api/json/v1/1/";
+    const SEARCH_URL = `${BASE_URL}search.php?s=`;
+    const LOOKUP_URL = `${BASE_URL}lookup.php?i=`;
+
+    // --- Utility Functions ---
+
+    /** Shows/Hides elements for view switching and loading state */
+    function setViewState(loading = false, error = '', heading = '') {
+        loadingSpinner.classList.toggle('hidden', !loading);
+        errorContainer.classList.toggle('hidden', !error);
+        mealsContainer.classList.toggle('hidden', loading || error || !heading);
+        resultHeading.textContent = heading;
+        errorMessage.textContent = error || 'An unexpected error occurred.';
+
+        // Ensure when loading or error, results are hidden
+        if (loading || error) {
+            mealsContainer.innerHTML = '';
+            mealDetailsView.classList.add('hidden');
+        }
+    }
+
+    // --- Event Listeners ---
+    searchBtn.addEventListener("click", searchMeals);
+    mealsContainer.addEventListener("click", handleMealClick);
+    backBtn.addEventListener("click", () => {
+        // Switch from details view back to results view
+        mealDetailsView.classList.add("hidden");
+        mealsContainer.classList.remove("hidden");
+        resultHeading.classList.remove("hidden");
+    });
+    searchInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") searchMeals();
+    });
+
+    // --- Main Functions ---
+
+    async function searchMeals() {
+        // FIX: Corrected typo in value property from 'ariaValueMax' to 'value'
+        const searchTerm = searchInput.value.trim();
+
+        if (!searchTerm) {
+            setViewState(false, "Please enter a search term for a meal🤨.", '');
+            return;
+        }
+
+        setViewState(true, '', `Searching for "${searchTerm}"...`);
+
+        try {
+            // Fetch results for the search term
+            const response = await fetch(`${SEARCH_URL}${searchTerm}`);
+            const data = await response.json();
+
+            if (data.meals) {
+                displayMeals(data.meals, searchTerm);
+            } else {
+                setViewState(false, `No meals found for "${searchTerm}". Try another search term😩!`, '');
+            }
+        } catch (error) {
+            console.error("Search Error:", error);
+            setViewState(false, "Failed to connect to the recipe service. Check your connection😥😥.", '');
+        }
+    }
+
+    function displayMeals(meals, searchTerm) {
+        mealsContainer.innerHTML = '';
+
+        meals.forEach((meal) => {
+            const mealElement = document.createElement("div");
+            mealElement.classList.add("meal");
+            mealElement.setAttribute("data-meal-id", meal.idMeal);
+
+            mealElement.innerHTML = `
+                <img src="${meal.strMealThumb}" alt="${meal.strMeal}" class="meal-img">
+                <div class="meal-info">
+                    <h2>${meal.strMeal}</h2>
+                    <p class="meal-category">
+                        <i class="fas fa-tags"></i> ${meal.strCategory || "Uncategorized"}
+                    </p>
+                    <button class="view-recipe-btn">View Recipe</button>
+                </div>
+            `;
+            mealsContainer.appendChild(mealElement);
+        });
+
+        setViewState(false, '', `Showing ${meals.length} recipes for "${searchTerm}"`);
+    }
+
+    async function handleMealClick(e) {
+        // Use closest() to find the parent .meal element
+        const mealEl = e.target.closest(".meal");
+        if (!mealEl) return;
+
+        const mealId = mealEl.getAttribute("data-meal-id");
+
+        // Show loading state while fetching details
+        setViewState(true, '', 'Loading recipe details...');
+
+        try {
+            // Fetch meal details by ID
+            const response = await fetch(`${LOOKUP_URL}${mealId}`);
+            const data = await response.json();
+
+            if (data.meals && data.meals[0]) {
+                const meal = data.meals[0];
+                const ingredients = [];
+
+                // Extract up to 20 ingredients and measures
+                for (let i = 1; i <= 20; i++) {
+                    const ingredient = meal[`strIngredient${i}`];
+                    const measure = meal[`strMeasure${i}`];
+
+                    if (ingredient && ingredient.trim() !== "") {
+                        ingredients.push({ ingredient, measure });
+                    }
+                }
+
+                // Generate HTML for the details view
+                mealDetailsContent.innerHTML = `
+                    <div class="details-text-container">
+                        <div class="meal-details-header">
+                            <h2>${meal.strMeal}</h2>
+                            <p class="meal-details-category">
+                                <span><i class="fas fa-tag"></i> ${meal.strCategory || "Uncategorized"}</span>
+                            </p>
+                            ${meal.strArea ? `<p class="meal-details-area" style="margin-top: 5px;"><i class="fas fa-globe"></i> Origin: <b>${meal.strArea}</b></p>` : ''}
+                        </div>
+
+                        <div class="meal-details-instructions">
+                            <h3><i class="fas fa-clipboard-list"></i> Instructions</h3>
+                            <!-- Replacing new lines with <br> for better HTML display -->
+                            <p>${(meal.strInstructions || "No instructions provided.").replace(/\n/g, '<br><br>')}</p>
+                        </div>
+
+                        <div class="meal-details-ingredients">
+                            <h3><i class="fas fa-mortar-pestle"></i> Ingredients</h3>
+                            <ul class="ingredients-list">
+                                ${ingredients
+                                    .map(
+                                        (item) => `
+                                        <li><i class="fas fa-check-circle"></i> ${item.measure} ${item.ingredient}</li>
+                                    `
+                                    )
+                                    .join('')}
+                            </ul>
+                        </div>
+
+                        ${meal.strYoutube ? `
+                            <div class="youtube-link" style="margin-top: 20px;">
+                                <a href="${meal.strYoutube}" target="_blank" class="view-recipe-btn" style="background-color: #c0392b;"><i class="fab fa-youtube"></i> Watch Video</a>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <img src="${meal.strMealThumb}" alt="${meal.strMeal}" class="meal-details-img">
+                `;
+
+                // Switch to details view
+                setViewState(false, '');
+                mealsContainer.classList.add("hidden");
+                resultHeading.classList.add("hidden");
+                mealDetailsView.classList.remove("hidden");
+
+            } else {
+                setViewState(false, "Could not load recipe details🤐.", '');
+            }
+
+        } catch (error) {
+            console.error("Lookup Error:", error);
+            setViewState(false, "Failed to load recipe details. Check your connection😥.", '');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Set initial state when the page loads
+        setViewState(false, '', 'Search for a meal to get started🍳!');
+    });
+   </script>
+</body>
+</html>
