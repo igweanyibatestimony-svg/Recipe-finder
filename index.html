@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search TheMealDB for recipes and view ingredients, instructions, and available videos.">
+    <title>Recipe Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <main class="container">
+        <header class="site-header">
+            <h1><i class="fas fa-utensils" aria-hidden="true"></i> Recipe Finder</h1>
+            <p>Find delicious recipes from around the world<span aria-hidden="true"> 😎</span></p>
+        </header>
+
+        <p class="api-link">
+            Data from <a href="https://www.themealdb.com/api.php" target="_blank" rel="noopener noreferrer">TheMealDB<span class="sr-only"> (opens in a new tab)</span></a>
+        </p>
+
+        <form id="search-form" class="search-container" role="search">
+            <label class="sr-only" for="search-input">Search for a meal</label>
+            <input type="search" id="search-input" name="query" placeholder="Search for meals or keywords (e.g., Chicken, Pizza)" autocomplete="off" required>
+            <button id="search-btn" type="submit"><i class="fas fa-search" aria-hidden="true"></i> Search</button>
+        </form>
+
+        <div id="loading-spinner" class="spinner-container" role="status" aria-live="polite" hidden>
+            <div class="spinner" aria-hidden="true"></div>
+            <p id="loading-message">Fetching delicious recipes...</p>
+        </div>
+
+        <div id="error-container" class="error-container" role="alert" hidden>
+            <p id="error-message"></p>
+        </div>
+
+        <section id="search-results" aria-labelledby="result-heading">
+            <h2 id="result-heading" tabindex="-1">Search for a meal to get started<span aria-hidden="true"> 🍳</span></h2>
+            <div id="meals" class="meals-container" aria-live="polite"></div>
+        </section>
+
+        <section id="meal-details" class="meal-details-view" aria-label="Recipe details" hidden>
+            <button id="back-btn" class="button button-secondary" type="button"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Recipes</button>
+            <div id="meal-details-content" class="meal-details-content"></div>
+        </section>
+    </main>
+</body>
+</html>
